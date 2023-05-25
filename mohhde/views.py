@@ -39,7 +39,7 @@ def login_view(request):
     user = authenticate(username=username, password=password)
     if user:
         login(request, user)
-        return Response({'message': 'Vous êtes maintenant connecté.'})
+        return Response({'message': 'Vous êtes maintenant connecté.', 'user_token': user.profile.pruser_token})
     else:
         return Response({
             'error': 'Nom d\'utilisateur ou mot de passe invalide.'

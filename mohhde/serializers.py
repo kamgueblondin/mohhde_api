@@ -4,6 +4,7 @@
 from django.contrib.auth.models import User
 from .models import Profile
 from rest_framework import serializers
+from django.utils.crypto import get_random_string
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -11,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'email')
+        fields = ('id', 'username', 'password', 'email','phone','sex','birthday')
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -20,7 +21,16 @@ class UserSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
-        profile=Profile.objects.create(user=user)
+        # Generate a random 60-digit code
+        reset_code = get_random_string(length=60)
+        profile=Profile.objects.create(
+            user=user,
+            phone=validated_data['phone'],
+            birthday=validated_data['birthday'],
+            sex=validated_data['sex'],
+            user_token=reset_code
+
+        )
         profile.save()
         return user
 
