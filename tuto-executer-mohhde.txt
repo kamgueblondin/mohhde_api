@@ -1,0 +1,60 @@
+--Ouvrire le cmd dans le dossier du projet
+--Créer un environnement virtuel :
+
+py -m venv env
+
+--Activer l'environnement virtuel
+
+.\env\Scripts\activate
+
+--Se deplacer pour être dans le dossier du projet
+
+cd mohhde
+
+--Lancer le serveur
+
+python manage.py runserver
+
+--les migrations
+
+python manage.py makemigrations
+
+--applique
+
+python manage.py migrate
+
+---voir
+
+python manage.py showmigrations
+
+
+---init les migrations
+
+python manage.py makemigrations --empty mohhde
+
+//MAIL
+
+//ok
+https://app.sparkpost.com/
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sparkpostmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_SENDER_USER = 'mohhent@maxpower.cm'
+EMAIL_HOST_USER = 'SMTP_Injection'
+EMAIL_HOST_PASSWORD = '57aaf6d0406a7f6c042f5a0771db972ea60517ed'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mohhent@gmail.com'
+EMAIL_HOST_PASSWORD = '5v9wDbZLP1SCIgGr'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'in-v3.mailjet.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_ENDER_USER = 'mohhent@maxpower.cm'
+EMAIL_HOST_USER = '981861d7a9b530e8b627b1b959f5e6ab'
+EMAIL_HOST_PASSWORD = '2e7817e067810713748f2977725e33cf'

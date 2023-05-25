@@ -1,0 +1,33 @@
+Mon tuto de démarrage 20-05-2023
+Créer un environnement virtuel :
+
+
+py -m venv env
+
+
+Activer l'environnement virtuel :
+
+
+.\env\Scripts\activate
+
+
+Installer Django :
+
+
+pip install django
+
+
+Créer un nouveau projet Django :
+
+django-admin startproject mohhde
+
+
+Se déplacer dans le répertoire du projet :
+
+cd mohhde
+
+
+Créer un nouvel application Django :
+
+
+python manage.py startapp mohhde
