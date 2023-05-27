@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from .views import UserCreateView, login_view, check_reset_password_code, send_reset_password_email, reset_password
+from .views import register_view, login_view, check_reset_password_code, send_reset_password_email, reset_password
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.accueil, name='accueil'),
-    path('api/register/', UserCreateView.as_view(), name='register'),
+    path('api/register/', register_view, name='register'),
     path('api/login/', login_view, name='login'),
     path('api/start_reset/', send_reset_password_email, name='start_reset'),
     path('api/verify_reset/', check_reset_password_code, name='verify_password_reset'),

@@ -18,13 +18,36 @@ def accueil(request):
     return render(request, 'home.html')
 
 #Views pour l'inscription
+# views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.contrib.auth.models import User
-from rest_framework import generics
-from .serializers import UserSerializer
-        
-class UserCreateView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+from .models import Profile
+from .serializers import UserSerializer, ProfileSerializer
+from django.utils.crypto import get_random_string
+from rest_framework import status
+import json
+
+@api_view(['POST'])
+def register_view(request):
+    user_serializer = UserSerializer(data=request.data.get('user'))
+    profile_serializer = ProfileSerializer(data=request.data.get('profile'))
+    if user_serializer.is_valid(raise_exception=True) and profile_serializer.is_valid(raise_exception=True):
+        user = user_serializer.save()
+        # Generate a random 60-digit code
+        user_token = get_random_string(length=60)
+        profile_data = {'user': user, 'user_token': user_token, **request.data['profile']}
+        profile_instance = profile_serializer.create(profile_data)
+        response_data = {
+            'user': UserSerializer(user).data,
+            'profile': ProfileSerializer(profile_instance).data,
+        }
+        return Response(response_data, status=status.HTTP_201_CREATED)
+    error_response_data = {
+            'user_errors': user_serializer.errors,
+            'profile_errors': profile_serializer.errors,
+     }
+    return Response(error_response_data ,status=status.HTTP_400_BAD_REQUEST)
 
 #Views pour la connexion
 from django.contrib.auth import authenticate, login
@@ -55,7 +78,7 @@ from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-
+# Vue basée sur une classe générique qui gère la création d'un nouvel objet utilisateur lorsqu'une requête POST est soumise.
 @csrf_exempt
 @api_view(['POST'])
 def send_reset_password_email(request):
