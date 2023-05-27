@@ -13,9 +13,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password', 'email']
 
 class ProfileSerializer(serializers.ModelSerializer):
-    phone = serializers.CharField(max_length=30, required=False)
     sex = serializers.CharField(max_length=30, required=False)
     birthday = serializers.CharField(max_length=30, required=False)
+    user_token = serializers.CharField(required=False)
     class Meta:
         model = Profile
-        fields = ['id', 'phone', 'sex', 'birthday']
+        fields = ['id', 'phone', 'sex', 'birthday', 'email','user_token']

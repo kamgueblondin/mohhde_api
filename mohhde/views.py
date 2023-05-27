@@ -26,24 +26,32 @@ from .models import Profile
 from .serializers import UserSerializer, ProfileSerializer
 from django.utils.crypto import get_random_string
 from rest_framework import status
-import json
+from django.db import transaction
 
 @api_view(['POST'])
+@transaction.atomic
 def register_view(request):
     user_serializer = UserSerializer(data=request.data.get('user'))
     profile_serializer = ProfileSerializer(data=request.data.get('profile'))
     if user_serializer.is_valid(raise_exception=True) and profile_serializer.is_valid(raise_exception=True):
         user = user_serializer.save()
+        # Utiliser set_password() pour hasher le mot de passe.
+        user.set_password(user.password)
+        # Enregistrer les modifications apportées à l'utilisateur.
+        user.save()
+
         # Generate a random 60-digit code
         user_token = get_random_string(length=60)
         profile_data = {'user': user, 'user_token': user_token, **request.data['profile']}
         profile_instance = profile_serializer.create(profile_data)
         response_data = {
+            'success': True,
             'user': UserSerializer(user).data,
             'profile': ProfileSerializer(profile_instance).data,
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
     error_response_data = {
+            'success': False,
             'user_errors': user_serializer.errors,
             'profile_errors': profile_serializer.errors,
      }
@@ -62,9 +70,15 @@ def login_view(request):
     user = authenticate(username=username, password=password)
     if user:
         login(request, user)
-        return Response({'message': 'Vous êtes maintenant connecté.', 'user_token': user.profile.user_token})
+        response_data = {
+            'success': True,
+            'user': UserSerializer(user).data,
+            'profile': ProfileSerializer(user.profile).data,
+        }
+        return Response(response_data)
     else:
         return Response({
+            'success': False,
             'error': 'Nom d\'utilisateur ou mot de passe invalide.'
         }, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -143,7 +157,12 @@ def reset_password(request):
                 user.set_password(new_password)
                 user.profile.reset_code = ''
                 user.save()
-                return Response({'success': True})
+                response_data = {
+                    'success': True,
+                    'user': UserSerializer(user).data,
+                    'profile': ProfileSerializer(user.profile).data,
+                }
+                return Response(response_data)
             else:
                 return Response({'success': False, 'message': 'Incorrect reset code'})
         else:
