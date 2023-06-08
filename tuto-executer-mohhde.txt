@@ -60,7 +60,7 @@ EMAIL_HOST_USER = '981861d7a9b530e8b627b1b959f5e6ab'
 EMAIL_HOST_PASSWORD = '2e7817e067810713748f2977725e33cf'
 
 //token
-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
+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
 
 //Toutes les tables
 python manage.py inspectdb
