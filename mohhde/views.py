@@ -15,7 +15,7 @@ def send_simple_message():
 # Next, you should add your own domain so you can send 10000 emails/month for free.
 from django.shortcuts import render
 def accueil(request):
-    return render(request, 'home.html')
+    return render(request, './templates/home.html')
 
 #Views pour l'inscription
 # views.py

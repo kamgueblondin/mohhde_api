@@ -22,6 +22,7 @@ from .views import register_view, login_view, check_reset_password_code, send_re
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.accueil, name='accueil'),
+    path('', include('chat.urls')),
     path('api/register/', register_view, name='register'),
     path('api/login/', login_view, name='login'),
     path('api/start_reset/', send_reset_password_email, name='start_reset'),

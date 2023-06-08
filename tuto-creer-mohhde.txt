@@ -31,3 +31,7 @@ Créer un nouvel application Django :
 
 
 python manage.py startapp mohhde
+
+pip install django,django-channels
+
+pip freeze > requirements.txt

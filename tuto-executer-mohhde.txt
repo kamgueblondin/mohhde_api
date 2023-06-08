@@ -64,3 +64,18 @@ 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
 
 //Toutes les tables
 python manage.py inspectdb
+
+//toute les url
+python manage.py show_urls
+
+//test websocket
+pip install websocat
+
+//chat
+pip install channels
+pip install daphne
+pip install channels_redis
+pip install django-extensions
+pip install djangochannelsrestframework
+
+//Socket : daphne mohhde.asgi:application
