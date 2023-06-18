@@ -79,3 +79,9 @@ pip install django-extensions
 pip install djangochannelsrestframework
 
 //Socket : daphne mohhde.asgi:application
+
+//KAPY
+fokouak@gmail.com
+kamgueblondin@gmail.com
+timbafiag@gmail.com
+tambafia1@gmail.com
