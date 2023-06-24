@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'mohhde',
     'chat',
     'together',
+    'medias',
 ]
 
 MIDDLEWARE = [

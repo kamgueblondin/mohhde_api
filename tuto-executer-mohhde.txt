@@ -80,6 +80,21 @@ pip install djangochannelsrestframework
 
 //Socket : daphne mohhde.asgi:application
 
+//open ia
+mohhent@maxpower.cm
+Petite1234####
++9710505749844
+
+//mohhGPT key openia
+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
+Organization settings
+Organization name
+Human-friendly label for your organization, shown in user interfaces
+mohhent
+Organization ID
+org-kCgEnxsax9PlZqX8TzX0HZRT
+
+
 //KAPY
 fokouak@gmail.com
 kamgueblondin@gmail.com
