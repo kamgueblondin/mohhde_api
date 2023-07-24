@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'chat',
     'together',
     'medias',
+    'community',
+    'activity',
+    'project',
 ]
 
 MIDDLEWARE = [

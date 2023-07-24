@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from .views import register_view, login_view, check_reset_password_code, send_reset_password_email, reset_password
+from .views import register_view, login_view, logout_view, check_reset_password_code, send_reset_password_email, reset_password,infos_profile,update_profile,change_password,media_profile,media_galerie,ma_photo_profile,mes_photos_galerie,archive_media_profile,archive_media_galerie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +26,17 @@ urlpatterns = [
     path('', include('chat.urls')),
     path('api/register/', register_view, name='register'),
     path('api/login/', login_view, name='login'),
+    path('api/logout/', logout_view, name='logout'),
     path('api/start_reset/', send_reset_password_email, name='start_reset'),
     path('api/verify_reset/', check_reset_password_code, name='verify_password_reset'),
     path('api/validate_reset/', reset_password, name='validate_password_reset'),
+    path('api/infos_profile/', infos_profile, name='infos_profile'),
+    path('api/update_profile/', update_profile, name='update_profile'),
+    path('api/change_password/', change_password, name='change_password'),
+    path('api/media_profile/', media_profile, name='media_profile'),
+    path('api/media_galerie/', media_galerie, name='media_galerie'),
+    path('api/ma_photo_profile/', ma_photo_profile, name='ma_photo_profile'),
+    path('api/mes_photos_galerie/', mes_photos_galerie, name='mes_photos_galerie'),
+    path('api/archive_media_profile/', archive_media_profile, name='archive_media_profile'),
+    path('api/archive_media_galerie/', archive_media_galerie, name='archive_media_galerie'),
 ]
