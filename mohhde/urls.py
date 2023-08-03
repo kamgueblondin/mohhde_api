@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from .views import register_view, login_view, logout_view, check_reset_password_code, send_reset_password_email, reset_password,infos_profile,update_profile,change_password,media_profile,media_galerie,ma_photo_profile,mes_photos_galerie,archive_media_profile,archive_media_galerie
+from .views import register_view, validate_register_view, reload_register_view, login_view, logout_view, check_reset_password_code, send_reset_password_email, reset_password,infos_profile,update_profile,change_password,media_profile,media_galerie,ma_photo_profile,mes_photos_galerie,archive_media_profile,archive_media_galerie
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +25,8 @@ urlpatterns = [
     path('api/together/', include('together.urls')),
     path('', include('chat.urls')),
     path('api/register/', register_view, name='register'),
+    path('api/register/validate/', validate_register_view, name='register_validate'),
+    path('api/register/reload/', reload_register_view, name='register_reload'),
     path('api/login/', login_view, name='login'),
     path('api/logout/', logout_view, name='logout'),
     path('api/start_reset/', send_reset_password_email, name='start_reset'),

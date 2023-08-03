@@ -15,6 +15,7 @@ def send_simple_message():
 # Next, you should add your own domain so you can send 10000 emails/month for free.
 from django.shortcuts import render
 from medias.models import Chain, Media
+from wallet.models import Account
 def accueil(request):
     return render(request, './templates/home.html')
 
@@ -25,6 +26,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .models import Profile
 from .serializers import UserSerializer, ProfileSerializer
+from wallet.serializers import AccountSerializer
 from django.utils.crypto import get_random_string
 from rest_framework import status
 from django.db import transaction
@@ -40,23 +42,73 @@ def register_view(request):
         user.set_password(user.password)
         # Enregistrer les modifications apportées à l'utilisateur.
         user.save()
+        #Account
+        account = Account.objects.create(user=user, balance=0)
 
         # Generate a random 60-digit code
-        user_token = get_random_string(length=60)
+        user_token = "mohh_"+get_random_string(length=60)
         profile_data = {'user': user, 'user_token': user_token, **request.data['profile']}
         profile_instance = profile_serializer.create(profile_data)
-        response_data = {
+        # Send the reset code to the user's email address
+        # Generate a random 6-digit code
+        reset_code = get_random_string(length=6)
+        subject = 'Registration validation code for {}'.format(settings.PROJECT_NAME)
+        message = 'Your registration validation code is {}'.format(reset_code)
+        from_email = settings.EMAIL_SENDER_USER
+        recipient_list = [user.email]
+        # Set the reset code for the user
+        user.profile.reset_code = reset_code
+        user.profile.save()
+        
+        try:
+            # Send Email
+            try:
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+            except Exception as e:
+                # Error sending
+                True
+            response_data = {
             'success': True,
             'user': UserSerializer(user).data,
             'profile': ProfileSerializer(profile_instance).data,
-        }
-        return Response(response_data, status=status.HTTP_201_CREATED)
+            'compte': AccountSerializer(account).data,
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            # Error sending
+            return Response({'success': False, 'message': 'Erreur avec le serveur d\'email.'})
     error_response_data = {
             'success': False,
             'user_errors': user_serializer.errors,
             'profile_errors': profile_serializer.errors,
      }
     return Response(error_response_data ,status=status.HTTP_400_BAD_REQUEST)
+
+#Views pour valider l'inscription
+@api_view(['POST'])
+def validate_register_view(request) :
+    if request.method == 'POST':
+        email = request.data.get('email')
+        reset_code = request.data.get('reset_code')
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            if user.profile.reset_code == reset_code:
+                user_token = get_random_string(length=60)
+                user.profile.user_token = user_token
+                user.profile.save()
+                response_data = {
+                    'success': True,
+                    'user': UserSerializer(user).data,
+                    'profile': ProfileSerializer(user.profile).data,
+                    'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
+                }
+                return Response(response_data)
+            else:
+                return Response({'success': False, 'message': 'Incorrect register code'})
+        else:
+            return Response({'success': False, 'message': 'No user with this email'})
+    else:
+        return Response({'success': False, 'message': 'Invalid method'})
 
 #Views pour la connexion
 from django.contrib.auth import authenticate, login
@@ -75,6 +127,7 @@ def login_view(request):
             'success': True,
             'user': UserSerializer(user).data,
             'profile': ProfileSerializer(user.profile).data,
+            'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
         }
         return Response(response_data)
     else:
@@ -120,7 +173,40 @@ def send_reset_password_email(request):
                 return Response({'success': True})
             except Exception as e:
                 # Error sending
-                return Response({'success': False, 'message': e})
+                return Response({'success': False, 'message': 'Erreur avec le serveur d\'email.'})
+            
+        else:
+            return Response({'success': False, 'message': 'No user with this email'})
+    else:
+        return Response({'success': False, 'message': 'Invalid method'})
+
+# relance de l'inscription.
+@csrf_exempt
+@api_view(['POST'])
+def reload_register_view(request):
+    if request.method == 'POST':
+        #email = request.POST.get('email')
+        email = request.data.get('email')
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            # Generate a random 6-digit code
+            reset_code = get_random_string(length=6)
+            # Set the reset code for the user
+            user.profile.reset_code = reset_code
+            user.profile.save()
+            # Send the reset code to the user's email address
+            subject = 'Registration validation code for for {}'.format(settings.PROJECT_NAME)
+            message = 'Your registration validation code for  is {}'.format(reset_code)
+            from_email = settings.EMAIL_SENDER_USER
+            recipient_list = [email]
+            
+            try:
+                # Send Email
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+                return Response({'success': True})
+            except Exception as e:
+                # Error sending
+                return Response({'success': False, 'message': 'Erreur avec le serveur d\'email.'})
             
         else:
             return Response({'success': False, 'message': 'No user with this email'})
@@ -164,6 +250,7 @@ def reset_password(request):
                     'success': True,
                     'user': UserSerializer(user).data,
                     'profile': ProfileSerializer(user.profile).data,
+                    'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
                 }
                 return Response(response_data)
             else:
@@ -185,6 +272,7 @@ def infos_profile(request):
                 'success': True,
                 'user': UserSerializer(user).data,
                 'profile': ProfileSerializer(user.profile).data,
+                'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
             }
             return Response(response_data)
         else:
@@ -213,6 +301,7 @@ def update_profile(request):
                 'success': True,
                 'user': UserSerializer(user).data,
                 'profile': ProfileSerializer(user.profile).data,
+                'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
             }
             return Response(response_data)
         else:
@@ -239,6 +328,7 @@ def change_password(request):
                 'success': True,
                 'user': UserSerializer(user).data,
                 'profile': ProfileSerializer(user.profile).data,
+                'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
             }
             return Response(response_data)
         else:

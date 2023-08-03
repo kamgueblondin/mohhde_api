@@ -40,11 +40,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'channels',
     'mohhde',
-    'chat',
-    'together',
+    'wallet',
     'medias',
+    'together',
     'community',
     'activity',
+    'chat',
     'project',
 ]
 
