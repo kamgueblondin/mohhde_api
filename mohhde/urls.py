@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.accueil, name='accueil'),
     path('api/together/', include('together.urls')),
+    path('api/notification/', include('notification.urls')),
     path('', include('chat.urls')),
     path('api/register/', register_view, name='register'),
     path('api/register/validate/', validate_register_view, name='register_validate'),

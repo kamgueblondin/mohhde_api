@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'activity',
     'chat',
     'project',
+    'audit',
+    'notification',
+    'annonce',
 ]
 
 MIDDLEWARE = [
