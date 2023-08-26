@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import UserSearchView, FriendshipRequestView, FriendshipAcceptView, FriendshipReAcceptView, FriendListView, AllListView, FriendDetailView, ReportFriendView, BlockFriendView, RemoveFriendView, ProfileFriendView, GalerieFriendView
+from .views import UserSearchView, FriendsConversationCodes, FriendshipRequestView, FriendshipAcceptView, FriendshipReAcceptView, FriendListView, AllListView, FriendDetailView, ReportFriendView, BlockFriendView, RemoveFriendView, ProfileFriendView, GalerieFriendView
 
 urlpatterns = [
     path('user/', UserSearchView.as_view(), name='user-search'),
+    path('friend/friends-conversation-codes/', FriendsConversationCodes.as_view(), name='friends_conversation_codes'),
     path('friend/request/', FriendshipRequestView.as_view(), name='friend-request'),
     path('friend/accept/request/', FriendshipAcceptView.as_view(), name='friend-accept'),
     path('friend/reactivate/accept/', FriendshipReAcceptView.as_view(), name='reactivate-friend-accept'),

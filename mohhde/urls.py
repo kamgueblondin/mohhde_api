@@ -24,6 +24,8 @@ urlpatterns = [
     path('', views.accueil, name='accueil'),
     path('api/together/', include('together.urls')),
     path('api/notification/', include('notification.urls')),
+    path('api/annonce/', include('annonce.urls')),
+    path('api/stockage/', include('stockage.urls')),
     path('', include('chat.urls')),
     path('api/register/', register_view, name='register'),
     path('api/register/validate/', validate_register_view, name='register_validate'),

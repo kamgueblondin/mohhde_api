@@ -15,9 +15,9 @@ from django.db import transaction
 
 class UserSearchView(APIView):
     def get(self, request):
-        username = request.GET.get('username')
-        user_token = request.GET.get('user_token')
-        username_search=request.GET.get('query')
+        username = request.data.get('username')
+        user_token = request.data.get('user_token')
+        username_search=request.data.get('query')
 
         if not username or not user_token:
             return Response({'success': False, 'message': 'Missing required parameters'})
@@ -28,9 +28,46 @@ class UserSearchView(APIView):
         if len(users) == 0:
             return Response({'success': False, 'message':'No users found with the specified username'})
         
-        return Response(serializer.data)
+        response_data ={
+            'success': True,
+            'users': serializer.data
+        }
+        
+        return Response(response_data)
 
 
+class FriendsConversationCodes(APIView):
+    def get(self, request):
+        user = get_object_or_404(User, username=request.data.get('username'))
+        user_token = request.data.get('user_token')
+
+        if not user_token:
+            return Response({'success': False, 'message': 'Missing required parameter: user_token'})
+
+        if user.profile.user_token != user_token:
+            return Response({'success': False, 'message': 'Invalid token for the specified user'})
+
+        friendships = Friendship.objects.filter(status='accepted')
+        friend_data = []
+        
+        for friendship in friendships:
+            data = {
+                'user': friendship.user.username,
+                'friend': friendship.friend.username,
+                'status': friendship.status,
+                'category': friendship.category,
+                'conversation_code': friendship.conversation.code if friendship.conversation else None
+            }
+            
+            friend_data.append(data)
+        
+        response_data = {
+            "success": True,
+            "friendship": friend_data
+        }
+        
+        return Response(response_data)
+    
 class FriendshipRequestView(APIView):
     def post(self, request):
         friend = get_object_or_404(User, username=request.data.get('friend'))
@@ -47,8 +84,12 @@ class FriendshipRequestView(APIView):
         friendship.save()
         
         serializer = FriendshipSerializer(friendship)
+        response_data ={
+            'success': True,
+            'friendship': serializer.data
+        }
         
-        return Response(serializer.data)
+        return Response(response_data)
 
 
 class FriendshipAcceptView(APIView):
@@ -63,22 +104,24 @@ class FriendshipAcceptView(APIView):
         if user.profile.user_token != user_token:
             return Response({'success': False, 'message': 'Invalid token for the specified user'})
         
-        friendship = get_object_or_404(Friendship, user=user, friend=friend, status='pending')
-        friendship.status = 'accepted'
-        friendship.save()
-        # Créer une nouvelle instance de la classe Conversation avec le participant actuel (utilisateur connecté)
-        conversation = Conversation.objects.create()
+        friendships = Friendship.objects.filter(user=user, friend=friend, status='pending')
+        for friendship in friendships:
+                friendship.status = 'accepted'
+                friendship.save()
+    
+                # Créer une nouvelle instance de la classe Conversation avec le participant actuel (utilisateur connecté)
+                conversation = Conversation.objects.create()
         
-        # Ajouter le participant actuel à la conversation
-        conversation.participants.add(user)
-        conversation.participants.add(friend)
+                # Ajouter le participant actuel à la conversation
+                conversation.participants.add(user)
+                conversation.participants.add(friend)
 
-        # Ajouter la conversation à l'amitié
-        friendship.conversation = conversation
-        friendship.save()
+                # Ajouter la conversation à l'amitié
+                friendship.conversation = conversation
+                friendship.save()
         
-        serializer = FriendshipSerializer(friendship)
-        return Response(serializer.data)
+        return Response({'success': True, 'message': 'ok'})
+        
 
 
 class FriendshipReAcceptView(APIView):
@@ -115,13 +158,19 @@ class FriendListView(APIView):
             return Response({'success': False, 'message': 'Invalid token for the specified user'})
         
         serializer = FriendshipSerializer(friends, many=True)
-        return Response(serializer.data)
+
+        response_data ={
+            'success': True,
+            'friendship': serializer.data
+        }
+        
+        return Response(response_data)
 
 
 class AllListView(APIView):
     def get(self, request):
-        user = get_object_or_404(User, username=request.GET.get('username'))
-        user_token = request.GET.get('user_token')
+        user = get_object_or_404(User, username=request.data.get('username'))
+        user_token = request.data.get('user_token')
 
         if not user_token:
             return Response({'success': False, 'message': 'Missing required parameter: user_token'})
@@ -129,9 +178,14 @@ class AllListView(APIView):
         if user.profile.user_token != user_token:
             return Response({'success': False, 'message': 'Invalid token for the specified user'})
         
-        friends = Friendship.objects.filter(user=user)
+        friends = Friendship.objects.filter(user=user, status='pending')
         serializer = FriendshipSerializer(friends, many=True)
-        return Response(serializer.data)
+        response_data ={
+            'success': True,
+            'friendship': serializer.data
+        }
+        
+        return Response(response_data)
 
 
 class FriendDetailView(APIView):
@@ -149,7 +203,12 @@ class FriendDetailView(APIView):
         try:
             friendship = Friendship.objects.get(user=user, friend=friend, status='accepted')
             serializer = FriendshipSerializer(friendship)
-            return Response(serializer.data)
+            response_data ={
+                'success': True,
+                'friendship': serializer.data
+            }
+            
+            return Response(response_data)
         
         except ObjectDoesNotExist:
             return Response({'success': False, 'message': 'No accepted friendship found matching the criteria'})
@@ -174,7 +233,12 @@ class ReportFriendView(APIView):
             friendship.conversation.save()
             friendship.save()
             serializer = FriendshipSerializer(friendship)
-            return Response(serializer.data)
+            response_data ={
+                'success': True,
+                'friendship': serializer.data
+            }
+            
+            return Response(response_data)
         except ObjectDoesNotExist:
             return Response({'success': False, 'message': 'No Accepted friendship found matching the criteria'})
 
@@ -198,7 +262,12 @@ class BlockFriendView(APIView):
             friendship.conversation.save()
             friendship.save()
             serializer = FriendshipSerializer(friendship)
-            return Response(serializer.data)
+            response_data ={
+                'success': True,
+                'friendship': serializer.data
+            }
+            
+            return Response(response_data)
         except ObjectDoesNotExist:
             return Response({'success': False, 'message': 'No Accepted friendship found matching the criteria'})
 
@@ -217,7 +286,7 @@ class RemoveFriendView(APIView):
         
         friendship = Friendship.objects.filter(user=user, friend=friend)
         friendship.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'success': True, 'message': 'ok'})
 
 
 class ProfileFriendView(APIView):

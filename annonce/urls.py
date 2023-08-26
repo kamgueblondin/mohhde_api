@@ -1,12 +1,12 @@
 from django.urls import path, include
-from annonce.views import AnnonceListCreateView, AnnonceRetrieveUpdateDestroyView
+from rest_framework.routers import DefaultRouter
+from annonce.views import AnnonceListCreateView, AnnonceRetrieveUpdateDestroyView, get_system_active_announcement
+
+router = DefaultRouter()
 
 urlpatterns = [
-    # Autres URL de votre projet
-    path('api/', include('annonces.urls'))
-]
-
-api_urlpatterns = [
+    path('', include(router.urls)),
     path('annonces/', AnnonceListCreateView.as_view(), name='annonce-list-create'),
-    path('annonces/<int:pk>/', AnnonceRetrieveUpdateDestroyView.as_view(), name='annonce-retrieve-update-destroy')
+    path('annonces/<int:pk>/', AnnonceRetrieveUpdateDestroyView.as_view(), name='annonce-retrieve-update-destroy'),
+    path('annonces/systeme/active/', get_system_active_announcement),
 ]

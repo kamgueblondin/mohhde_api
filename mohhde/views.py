@@ -15,6 +15,7 @@ def send_simple_message():
 # Next, you should add your own domain so you can send 10000 emails/month for free.
 from django.shortcuts import render
 from medias.models import Chain, Media
+from notification.managers import NotificationManager
 from wallet.models import Account
 def accueil(request):
     return render(request, './templates/home.html')
@@ -59,6 +60,7 @@ def register_view(request):
         # Set the reset code for the user
         user.profile.reset_code = reset_code
         user.profile.save()
+        NotificationManager.create_notification(user, "Vous avez fait une inscription mohhde")
         
         try:
             # Send Email
@@ -96,6 +98,7 @@ def validate_register_view(request) :
                 user_token = get_random_string(length=60)
                 user.profile.user_token = user_token
                 user.profile.save()
+                NotificationManager.create_notification(user, "Vous avez fait une validation de compte mohhde")
                 response_data = {
                     'success': True,
                     'user': UserSerializer(user).data,
@@ -129,6 +132,7 @@ def login_view(request):
             'profile': ProfileSerializer(user.profile).data,
             'compte': AccountSerializer(Account.objects.filter(user=user).first()).data,
         }
+        NotificationManager.create_notification(user, "Nouvelle connexion mohhde")
         return Response(response_data)
     else:
         return Response({
@@ -161,6 +165,7 @@ def send_reset_password_email(request):
             # Set the reset code for the user
             user.profile.reset_code = reset_code
             user.profile.save()
+            NotificationManager.create_notification(user, "Vous avez fait une demande de réinitialisation du mot de passe mohhde")
             # Send the reset code to the user's email address
             subject = 'Password reset code for {}'.format(settings.PROJECT_NAME)
             message = 'Your password reset code is {}'.format(reset_code)
@@ -244,6 +249,7 @@ def reset_password(request):
             if user.profile.reset_code == reset_code:
                 user.set_password(new_password)
                 user.profile.reset_code = ''
+                NotificationManager.create_notification(user, "Vous avez fait un changement du mot de passe mohhde")
                 user.profile.save()
                 user.save()
                 response_data = {
@@ -297,6 +303,7 @@ def update_profile(request):
             user.profile.birthday=request.data.get('birthday')
             user.profile.save()
             user.save()
+            NotificationManager.create_notification(user, "Vous avez fait une mise à jour du compte mohhde")
             response_data = {
                 'success': True,
                 'user': UserSerializer(user).data,
@@ -324,6 +331,7 @@ def change_password(request):
              # Changer le mot de passe et sauvegarder l'utilisateur
             user.set_password(request.data.get("new_password"))
             user.save()
+            NotificationManager.create_notification(user, "Vous avez fait une réinitialisation du mot de passe mohhde")
             response_data = {
                 'success': True,
                 'user': UserSerializer(user).data,
@@ -348,6 +356,7 @@ def media_profile_old(request):
             photo_title = request.data.get('title')
             photo_description = request.data.get('description')
 
+            NotificationManager.create_notification(user, "Vous avez ajouter une photo de profil mohhde")
             try:
                 profile_chain = Chain.objects.get(name='profile', user=user)
             except Chain.DoesNotExist:
