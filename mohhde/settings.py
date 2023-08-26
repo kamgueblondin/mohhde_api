@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'notification',
     'annonce',
     'stockage',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

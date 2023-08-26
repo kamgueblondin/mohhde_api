@@ -35,3 +35,12 @@ python manage.py startapp mohhde
 pip install django,django-channels
 
 pip freeze > requirements.txt
+
+
+Pour générer un diagramme de classe avec toutes les relations à partir de vos modèles Django, vous pouvez utiliser des outils tels que django-extensions ou django-graphviz. Voici comment vous pouvez procéder:
+Installez l'extension Django appropriée en utilisant la commande suivante:
+
+pip install django-extensions
+
+python manage.py graph_models -a -g -o models.dot
+https://onlineconvertfree.com/convert/dot/#google_vignette
