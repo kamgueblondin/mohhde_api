@@ -45,3 +45,6 @@ urlpatterns = [
     path('api/archive_media_profile/', archive_media_profile, name='archive_media_profile'),
     path('api/archive_media_galerie/', archive_media_galerie, name='archive_media_galerie'),
 ]
+admin.site.site_header = 'mohhde Admin'
+admin.site.site_title  = 'mohhde Admin'
+admin.site.index_title   = 'mohhde Admin'

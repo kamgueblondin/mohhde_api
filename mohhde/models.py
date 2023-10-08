@@ -17,5 +17,6 @@ class Profile(models.Model):
         ('other','Other'),
     )
     sex=models.CharField(max_length=20,choices=sex_choices,blank=True,null=True)
+    est_expert=models.BooleanField(default=False)
     def  __str__(self):
         return self.user.username
