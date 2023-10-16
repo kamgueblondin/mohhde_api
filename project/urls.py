@@ -1,11 +1,11 @@
-from django.urls import include, path
-from rest_framework import routers
+from django.contrib import admin
+from django.urls import path, include
 from . import views
+from .views import projet_add_api
 
-router = routers.DefaultRouter()
 
 
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('moi/ajoute_projet/', projet_add_api, name='projet_add_api'),
 ]
