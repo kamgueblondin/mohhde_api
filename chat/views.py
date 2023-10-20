@@ -32,3 +32,17 @@ class ConversationMessagesAPIView(APIView):
         serializer = MessageSerializer(messages, many=True)
         
         return Response(serializer.data)
+
+from rest_framework.response import Response
+from text_generation import InferenceAPIClient
+
+class mohhassistantAPIView(APIView):
+    def post(self, request):
+        message =  request.data.get('message')
+        #client = InferenceAPIClient("OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5")
+        # Vérifier si le modèle est chargé
+        #text = client.generate("<|prompter|>"+message+"<|endoftext|><|assistant|>",False,1000).generated_text
+        client = InferenceAPIClient("OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5")
+        text = client.generate(message,False,200).generated_text
+        
+        return Response({'success': True, 'message': ""+text+""})

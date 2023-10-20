@@ -31,6 +31,8 @@ class Projet(models.Model):
     chaine_mise_avant = models.ForeignKey(Chain, related_name='projets_mise_avant', on_delete=models.SET_NULL, null=True)
     chaine_couverture = models.ForeignKey(Chain, related_name='projets_couverture', on_delete=models.SET_NULL, null=True)
     chaine_media = models.ForeignKey(Chain, related_name='projets_media', on_delete=models.SET_NULL,null=True)
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now_add=True)
     
 class Etape(models.Model):
     projet = models.ForeignKey(Projet, on_delete=models.CASCADE, related_name='etapes')

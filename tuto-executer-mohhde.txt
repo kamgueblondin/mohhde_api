@@ -77,6 +77,7 @@ pip install daphne
 pip install channels_redis
 pip install django-extensions
 pip install djangochannelsrestframework
+pip install text-generation
 
 //Socket : daphne mohhde.asgi:application
 daphne mohhde.asgi:application -p 8000 -b 127.0.0.2 --websocket_timeout -1

@@ -47,7 +47,7 @@ class FriendsConversationCodes(APIView):
         if user.profile.user_token != user_token:
             return Response({'success': False, 'message': 'Invalid token for the specified user'})
 
-        friendships = Friendship.objects.filter(status='accepted')
+        friendships = Friendship.objects.filter(user=user,status='accepted')
         friend_data = []
         
         for friendship in friendships:
