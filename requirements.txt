@@ -24,7 +24,7 @@ frozenlist==1.4.0
 fsspec==2023.9.2
 huggingface-hub==0.18.0
 hyperlink==21.0.0
-idna==3.4
+idna==3.7
 incremental==22.10.0
 msgpack==1.0.5
 multidict==6.0.4
