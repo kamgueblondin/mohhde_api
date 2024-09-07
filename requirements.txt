@@ -13,9 +13,9 @@ channels-redis==4.1.0
 charset-normalizer==3.3.0
 colorama==0.4.6
 constantly==15.1.0
-cryptography==41.0.1
+cryptography==43.0.1
 daphne==3.0.2
-Django==4.0
+Django==4.2.16
 django-extensions==3.2.1
 djangochannelsrestframework==1.1.0
 djangorestframework==3.14.0
